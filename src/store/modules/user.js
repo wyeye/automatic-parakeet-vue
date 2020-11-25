@@ -1,4 +1,4 @@
-import { login, logout, getInfo, loadMenu } from '@/api/login'
+import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -53,48 +53,6 @@ const user = {
           commit('SET_NAME', data.name)
           commit('SET_AVATAR', data.avatar)
           resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
-    GetMenu({ commit }, parmse) {
-      return new Promise((resolve, reject) => {
-        loadMenu().then(response => {
-          const menu = response.result.data
-          const getMenuList = (menu) => {
-            if (!menu || !menu.length) {
-              return
-            }
-            const res = []
-            const tmpMap = []
-            for (let i = 0; i < menu.length; i++) {
-              tmpMap[menu[i].id] = menu[i]
-              menu[i].component = menu[i].url
-              menu[i].path = menu[i].url
-              const name = menu[i].url.split('/')
-              if (name.length === 2) {
-                menu[i].name = name[1].charAt(0).toUpperCase() + name[1].slice(1)
-              } else if (name.length === 3 || name.length === 4) {
-                menu[i].name = name[2].charAt(0).toUpperCase() + name[2].slice(1)
-              }
-              menu[i].meta = { 'icon': menu[i].iconCls, 'title': menu[i].text }
-              delete menu[i].leaf
-              if (tmpMap[menu[i].pid] && menu[i].id !== menu[i].pid) {
-                if (!tmpMap[menu[i].pid].children) {
-                  tmpMap[menu[i].pid].children = []
-                }
-                tmpMap[menu[i].pid].children.push(menu[i])
-              } else {
-                res.push(menu[i])
-              }
-            }
-            return res
-          }
-          const menuLists = getMenuList(menu)
-          localStorage.setItem('menuList', JSON.stringify(menuLists))
-          resolve()
         }).catch(error => {
           reject(error)
         })
